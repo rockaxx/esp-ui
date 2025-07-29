@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 Serial Control</title>
+  <style>
+    body { font-family: Arial; background: #18181a; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;}
+    button, select { margin: 10px; padding: 14px; font-size: 1.2rem; border-radius: 10px; border: none; background: #2d2d32; color: #fff; cursor: pointer;}
+    button:hover, select:hover { background: #444455; }
+    label { margin-bottom: 4px; }
+    #com-group { display: flex; align-items: center; gap: 6px; }
+  </style>
+</head>
+<body>
+  <h1>ESP32 Serial Control</h1>
+  <div id="com-group">
+    <label for="comSelect">Serial port:</label>
+    <select id="comSelect"></select>
+    <button onclick="refreshPorts()" title="Refresh ports">&#x21bb;</button>
+    <button onclick="connectPort()">Connect</button>
+  </div>
+  <div id="mainButtons" style="display:none; flex-direction: column;">
+    <button onclick="sendCommand('O1')">LED ON</button>
+    <button onclick="sendCommand('O0')">LED OFF</button>
+  </div>
+  <script src="js/renderer.js"></script>
+</body>
+</html>
