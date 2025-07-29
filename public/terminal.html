@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <title>Terminál ESP32</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 text-white min-h-screen flex flex-col">
+  <nav class="bg-gray-800 p-4">
+    <ul class="flex space-x-6">
+      <li><a href="dashboard.html" class="hover:text-blue-400">Dashboard</a></li>
+      <li><a href="terminal.html" class="text-blue-400">Terminál</a></li>
+      <li><a href="logs.html" class="hover:text-blue-400">Logy</a></li>
+    </ul>
+  </nav>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold mb-4">Terminál</h1>
+    <div id="terminal" class="bg-black bg-opacity-70 rounded-md p-4 h-80 overflow-auto font-mono text-green-300 shadow-md"></div>
+    <div class="mt-4 flex space-x-2">
+      <button onclick="clearTerminal()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md">Vymazať</button>
+      <button onclick="copyLogs()" class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">Kopírovať</button>
+    </div>
+  </main>
+  <script>
+    const term = document.getElementById('terminal');
+    // funkcia na pridávanie riadkov z ESP
+    window.outputToTerminal = function(msg) {
+      term.textContent += msg + '\\n';
+      term.scrollTop = term.scrollHeight;
+    };
+    function clearTerminal() { term.textContent = ''; }
+    function copyLogs() { navigator.clipboard.writeText(term.textContent); alert('Logy skopírované.'); }
+  </script>
+</body>
+</html>

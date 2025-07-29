@@ -2,12 +2,10 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8">
-  <title>ESP32 Dashboard – Wide</title>
+  <title>ESP32 Dashboard – Toolbox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Tailwind + Flowbite CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
-  <!-- Feather Icons -->
   <script src="https://unpkg.com/feather-icons"></script>
   <style>
     body {
@@ -16,40 +14,103 @@
       font-family: 'Inter', Arial, sans-serif;
       margin: 0;
     }
+    .toolbox-panel {
+      transition: right 0.33s cubic-bezier(.47,1.64,.41,.8);
+      z-index: 50;
+    }
     .terminal-custom {
       background: rgba(20,24,32,0.93);
-      min-height: 220px;
+      min-height: 180px;
       max-height: 36vh;
       font-family: 'Fira Mono', 'Consolas', monospace;
       color: #9ff8b3;
-      font-size: 1.17rem;
-      border-radius: 1.4rem;
-      padding: 1.2rem 2.2rem 1.2rem 1.3rem;
+      font-size: 1.07rem;
+      border-radius: 1.2rem;
+      padding: 1.1rem 1.3rem;
       overflow-y: auto;
       box-shadow: 0 4px 32px 0 #222b3f60;
       border: 1.7px solid #1a2946;
+      margin-bottom: 1.2rem;
     }
-    /* Scrollbar */
-    .terminal-custom::-webkit-scrollbar {
-      width: 10px;
-      background: #19222b;
+    .toolbox-btn {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      z-index: 60;
+      transform: translateY(-50%);
+      background: linear-gradient(120deg, #1e293b 60%, #3b82f6 130%);
+      color: #fff;
+      border-radius: 18px 0 0 18px;
+      padding: 16px 13px 16px 7px;
+      box-shadow: 0 4px 22px 0 #1e253d4b;
+      cursor: pointer;
+      border: none;
+      font-size: 1.4rem;
+      outline: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s;
     }
-    .terminal-custom::-webkit-scrollbar-thumb {
-      background: #253457;
-      border-radius: 1.2rem;
+    .toolbox-btn:hover {
+      background: linear-gradient(100deg, #325ca6 60%, #1e293b 130%);
+      color: #fff;
     }
-    /* Responsívny */
-    @media (max-width: 900px) {
-      .big-btn { font-size: 1.3rem; padding: 1.8rem 0.5rem; }
-    }
-    @media (max-width: 700px) {
-      .big-btn { font-size: 1.08rem; padding: 1.3rem 0.15rem; }
-      .terminal-custom { font-size: 1rem; padding: 0.7rem 0.7rem 0.7rem 0.6rem;}
+    @media (max-width: 800px) {
+      .toolbox-panel { width: 96vw !important; }
+      .terminal-custom { font-size: 0.95rem; }
     }
   </style>
 </head>
 <body class="min-h-screen w-full flex flex-col bg-gradient-to-br from-slate-900 to-blue-900">
-  <!-- Header -->
+  <!-- Toolbox open button -->
+  <button id="openToolbox" class="toolbox-btn" onclick="openToolbox()" title="Otvoriť toolbox">
+    <i data-feather="sidebar"></i>
+  </button>
+  
+  <!-- Vysúvací toolbox -->
+  <aside id="toolboxPanel" class="toolbox-panel fixed top-0 right-[-510px] h-screen bg-[#171d29] shadow-2xl w-[420px] max-w-full flex flex-col transition-all">
+    <div class="flex items-center justify-between p-5 border-b border-blue-900/40">
+      <span class="text-xl font-bold text-blue-400 flex items-center gap-2"><i data-feather="tool"></i> Toolbox</span>
+      <button onclick="closeToolbox()" class="text-slate-400 hover:text-rose-400 transition text-2xl font-bold p-1"><i data-feather="x"></i></button>
+    </div>
+    <!-- Tabs -->
+    <ul class="flex flex-wrap text-md font-semibold text-blue-300 border-b border-blue-900/40" id="tablist" role="tablist">
+      <li class="mr-2">
+        <button class="inline-block p-4 rounded-t-lg hover:text-blue-500 active" id="tab-main" type="button" role="tab" onclick="selectTab('main')"><i data-feather="home" class="inline mb-1"></i> Main</button>
+      </li>
+      <li class="mr-2">
+        <button class="inline-block p-4 rounded-t-lg hover:text-blue-500" id="tab-terminal" type="button" role="tab" onclick="selectTab('terminal')"><i data-feather="terminal" class="inline mb-1"></i> Terminál</button>
+      </li>
+      <li>
+        <button class="inline-block p-4 rounded-t-lg hover:text-blue-500" id="tab-logy" type="button" role="tab" onclick="selectTab('logy')"><i data-feather="list" class="inline mb-1"></i> Logy</button>
+      </li>
+    </ul>
+    <!-- Tab Contents -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- Main Tab -->
+      <div id="tab-content-main" class="tab-content p-5">
+        <h3 class="text-lg font-semibold text-blue-200 mb-3 flex items-center gap-2"><i data-feather="activity"></i> Hlavná stránka</h3>
+        <p class="text-slate-300 mb-2">Tu môžeš dať základné info, stav ESP32, nastavenia, alebo rýchly prehľad.</p>
+      </div>
+      <!-- Terminál Tab -->
+      <div id="tab-content-terminal" class="tab-content p-5 hidden">
+        <h3 class="text-lg font-semibold text-blue-200 mb-3 flex items-center gap-2"><i data-feather="terminal"></i> Terminál</h3>
+        <div class="terminal-custom" id="terminal">
+          [Terminál pripojený] ESP32 ready...
+        </div>
+      </div>
+      <!-- Logy Tab -->
+      <div id="tab-content-logy" class="tab-content p-5 hidden">
+        <h3 class="text-lg font-semibold text-blue-200 mb-3 flex items-center gap-2"><i data-feather="list"></i> Logy</h3>
+        <ul class="list-disc pl-5 text-slate-300" id="logList">
+          <li>System initialized.</li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Hlavná dashboard sekcia -->
   <header class="w-full py-7 px-8 flex items-center justify-between bg-transparent">
     <div class="flex items-center gap-4">
       <span class="inline-flex items-center justify-center rounded-full bg-blue-600/80 h-14 w-14 shadow-lg">
@@ -65,44 +126,74 @@
   <!-- Main buttons -->
   <main class="w-full flex flex-col justify-start items-center flex-1 px-2 md:px-8 pb-7">
     <div class="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7 mt-2 mb-5">
-    <button class="big-btn w-full py-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(1)">
+      <button class="big-btn w-full py-4 rounded-2xl bg-cyan-600 hover:bg-cyan-700 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(1)">
         <i data-feather="cast" class="w-7 h-7"></i>
         Output 1
-    </button>
-    <button class="big-btn w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(2)">
+      </button>
+      <button class="big-btn w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(2)">
         <i data-feather="toggle-left" class="w-7 h-7"></i>
         Output 2
-    </button>
-    <button class="big-btn w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(3)">
+      </button>
+      <button class="big-btn w-full py-4 rounded-2xl bg-orange-500 hover:bg-orange-600 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(3)">
         <i data-feather="alert-circle" class="w-7 h-7"></i>
         Output 3
-    </button>
-    <button class="big-btn w-full py-4 rounded-2xl bg-pink-600 hover:bg-pink-700 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(4)">
+      </button>
+      <button class="big-btn w-full py-4 rounded-2xl bg-pink-600 hover:bg-pink-700 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(4)">
         <i data-feather="activity" class="w-7 h-7"></i>
         Output 4
-    </button>
-    <button class="big-btn w-full py-4 rounded-2xl bg-blue-700 hover:bg-blue-800 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(5)">
+      </button>
+      <button class="big-btn w-full py-4 rounded-2xl bg-blue-700 hover:bg-blue-800 text-lg font-bold text-white flex flex-col items-center justify-center gap-2 shadow-xl transition-all duration-150" onclick="outputClick(5)">
         <i data-feather="power" class="w-7 h-7"></i>
         Output 5
-    </button>
-    </div>
-
-    <!-- Terminál -->
-    <div class="w-full max-w-7xl">
-      <div class="terminal-custom mt-6" id="terminal">
-        [Terminál pripojený] ESP32 ready...
-      </div>
+      </button>
     </div>
   </main>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
   <script>
     feather.replace();
-    // Simulácia kliknutia na výstup (Output 1-5)
+
+    // Toolbox open/close logic
+    function openToolbox() {
+      document.getElementById('toolboxPanel').style.right = '0';
+      document.getElementById('openToolbox').style.display = 'none';
+    }
+    function closeToolbox() {
+      document.getElementById('toolboxPanel').style.right = '-510px';
+      document.getElementById('openToolbox').style.display = '';
+    }
+
+    // Tab logic
+    function selectTab(tab) {
+      // Skry všetky taby
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('#tablist button').forEach(el => el.classList.remove('text-blue-500', 'border-b-2', 'border-blue-500'));
+      // Zobraz len aktívny
+      document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).classList.add('text-blue-500', 'border-b-2', 'border-blue-500');
+    }
+
+    // Simulácia výstupu do terminálu/logu
     function outputClick(n) {
+      // Terminál
       const term = document.getElementById('terminal');
       const msg = `[${new Date().toLocaleTimeString()}] Výstup ${n}: Príkaz odoslaný na ESP32.\n`;
-      term.textContent += msg;
-      term.scrollTop = term.scrollHeight; // auto-scroll
+      if (term) {
+        term.textContent += msg;
+        term.scrollTop = term.scrollHeight;
+      }
+      // Logy
+      const logList = document.getElementById('logList');
+      if (logList) {
+        const li = document.createElement('li');
+        li.textContent = `Výstup ${n}: príkaz vykonaný v ${new Date().toLocaleTimeString()}`;
+        logList.appendChild(li);
+      }
+    }
+
+    // Inicializácia – zobraz prvý tab aktívny
+    window.onload = () => {
+      selectTab('main');
     }
   </script>
 </body>

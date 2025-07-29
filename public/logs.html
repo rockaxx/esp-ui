@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <title>História logov</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+  <nav class="bg-gray-800 p-4">
+    <ul class="flex space-x-6">
+      <li><a href="dashboard.html" class="hover:text-blue-400">Dashboard</a></li>
+      <li><a href="terminal.html" class="hover:text-blue-400">Terminál</a></li>
+      <li><a href="logs.html" class="text-blue-400">Logy</a></li>
+    </ul>
+  </nav>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold mb-4">História logov</h1>
+    <table id="logTable" class="display text-black w-full">
+      <thead><tr><th>Čas</th><th>Správa</th></tr></thead>
+      <tbody>
+      <!-- riadky sa doplnia pomocou JavaScriptu -->
+      </tbody>
+    </table>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script>
+    // Sem načítajte logy z backendu alebo z localStorage
+    const logs = []; // naplňte objektmi { timestamp: Date.now(), message: '...' }
+    $(document).ready(function() {
+      const table = $('#logTable').DataTable();
+      logs.forEach(log => table.row.add([
+        new Date(log.timestamp).toLocaleString(),
+        log.message
+      ]).draw(false));
+    });
+  </script>
+</body>
+</html>

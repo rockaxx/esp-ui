@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <title>ESP32 Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-900 text-white">
+  <!-- navigácia -->
+  <nav class="bg-gray-800 p-4">
+    <ul class="flex space-x-6">
+      <li><a href="dashboard.html" class="text-blue-400">Dashboard</a></li>
+      <li><a href="terminal.html" class="hover:text-blue-400">Terminál</a></li>
+      <li><a href="logs.html" class="hover:text-blue-400">Logy</a></li>
+    </ul>
+  </nav>
+  <!-- hlavička -->
+  <header class="p-4">
+    <h1 class="text-3xl font-bold">ESP32 Dashboard</h1>
+    <p class="text-sm text-gray-400">Riadenie a monitorovanie ESP32</p>
+  </header>
+  <!-- mriežka kariet -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+    <!-- Karta pripojenia -->
+    <div class="bg-gradient-to-br from-slate-700 to-blue-900 rounded-xl p-5 shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Pripojenie</h2>
+      <select id="comSelect" class="w-full p-2 bg-gray-800 text-white rounded-md mb-3"></select>
+      <button onclick="connectPort()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-full">Pripojiť</button>
+    </div>
+    <!-- Karta výstupov -->
+    <div class="bg-gradient-to-br from-fuchsia-700 to-pink-700 rounded-xl p-5 shadow-lg col-span-1 md:col-span-2">
+      <h2 class="text-xl font-semibold mb-2">Výstupy</h2>
+      <div class="flex flex-wrap gap-3">
+        <button onclick="sendCommand('o1')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-md">Výstup 1</button>
+        <button onclick="sendCommand('o2')" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-md">Výstup 2</button>
+        <button onclick="sendCommand('o3')" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-md">Výstup 3</button>
+        <button onclick="sendCommand('o4')" class="flex-1 bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-md">Výstup 4</button>
+        <button onclick="sendCommand('o5')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-md">Výstup 5</button>
+      </div>
+    </div>
+    <!-- Karta logov -->
+    <div class="bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl p-5 shadow-lg">
+      <h2 class="text-xl font-semibold mb-2">Posledné logy</h2>
+      <pre id="latestLogs" class="h-40 overflow-auto text-sm font-mono bg-gray-800 p-2 rounded-md"></pre>
+      <a href="logs.html" class="text-blue-400 mt-2 inline-block">Zobraziť všetky logy →</a>
+    </div>
+  </div>
+  <script src="js/renderer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.js"></script>
+</body>
+</html>
